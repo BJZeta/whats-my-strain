@@ -1,23 +1,23 @@
+const { db } = require("../util/admin");
+
 exports.getAllStrains = (req, res) => {
-    strains = [
-        {
-            'id': '1',
-            'name': 'OG Kush',
-            'strain': 'Hybrid',
-            'feelings': ['Happy', 'Relaxed', 'Euphoric', 'Uplifted']
-        },
-        {
-            'id': '2',
-            'name': 'Northern Lights',
-            'strain': 'Indica',
-            'feelings': ['Relaxed', 'Happy', 'Euphoric', 'Sleepy']
-        },
-        {
-            'id': '3',
-            'name': 'Jack Herer',
-            'strain': 'Sativa',
-            'feelings': ['Happy', 'Uplifted', 'Euphoric', 'Energetic']
-        }
-    ]
-    return res.json(strains)
-}
+  db.collection("strains")
+    .orderBy("name", "desc")
+    .get()
+    .then((data) => {
+      let strains = [];
+      data.forEach((item) => {
+        strains.push({
+          strainId: item.id,
+          name: item.data().name,
+          type: item.data().type,
+          feelings: item.data().feelings,
+        });
+      });
+      return res.json(strains);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
+};
