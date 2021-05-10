@@ -1,10 +1,12 @@
 const functions = require("firebase-functions");
-const app = require('express')();
+const app = require("express")();
 
-const {
-    getAllStrains
-} = require('./APIs/strains')
+const { loginUser, signUpUser } = require("./APIs/users");
 
-app.get('/strains', getAllStrains);
+const { getAllStrains } = require("./APIs/strains");
+
+app.post("/signup", signUpUser);
+app.post("/login", loginUser);
+app.get("/strains", getAllStrains);
 
 exports.api = functions.https.onRequest(app);
