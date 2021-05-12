@@ -30,3 +30,59 @@ exports.loginUser = (req, res) => {
       return res.status(403).json({ general: "Wrong Credentials, Try Again" });
     });
 };
+
+////SIGNUP
+exports.signUpUser = (req, res) => {
+  const newUser = {
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+  };
+
+  const { valid, erros } = validateSignUpData(newUser);
+
+  if (!valid) throw res.status(400).json(erros);
+
+  let token, userId;
+  db.doc(`/users/${newUser.username}`)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        return res
+          .status(400)
+          .json({ username: "This username already exists :/" });
+      } else {
+        return firebase
+          .auth()
+          .createUserWithEmailAndPassword(newUser.email, newUser.password);
+      }
+    })
+    .then((data) => {
+      userId = data.user.uid;
+      return data.user.getIdToken();
+    })
+    .then((idtoken) => {
+      token = idtoken;
+      const userCredentials = {
+        username: newUser.username,
+        email: newUser.email,
+        createdAt: new Date().toISOString(),
+        userId,
+      };
+      return db.doc(`/users/${newUser.username}`).set(userCredentials);
+    })
+    .then(() => {
+      return res.status(201).json({ token });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.code === "auth/email-already-in-use") {
+        return res.status(400).json({ email: "Email already taken" });
+      } else {
+        return res
+          .status(500)
+          .json({ general: "Something wen wrong, please try again..." });
+      }
+    });
+};
