@@ -118,7 +118,11 @@ exports.uploadProfilePic = (req, res) => {
   let imageToBeUpload = {};
 
   busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
-    if (mimetype !== "image/png" && mimetype !== "image/jpeg" && mimetype !== "image/jpg") {
+    if (
+      mimetype !== "image/png" &&
+      mimetype !== "image/jpeg" &&
+      mimetype !== "image/jpg"
+    ) {
       return res.status(400).json({ error: "Wrong file submitted" });
     }
     const imageExtension = filename.split(".")[filename.split(".").length - 1];
@@ -155,4 +159,22 @@ exports.uploadProfilePic = (req, res) => {
       });
   });
   busboy.end(req.rawBody);
+};
+
+///////////////////////// GET USER DATA
+/////////////////////////// GET Request
+exports.getUserDetail = (req, res) => {
+  let userData = {};
+  db.doc(`/users/${req.user.username}`)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        userData.userCredentials = doc.data();
+        return res.json(userData);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
 };
