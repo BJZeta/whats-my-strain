@@ -15,14 +15,9 @@ const LandingScreen = () => {
           questions
         </h3>
         <div className="mt-5">
-          <LinkContainer to="/">
+          <LinkContainer to="/questions">
             <Button size="lg" as="button" className="btn-success">
-              Start Fresh
-            </Button>
-          </LinkContainer>
-          <LinkContainer to="/">
-            <Button size="lg" as="button" className="mx-auto">
-              Sign In
+              Lookup Strain
             </Button>
           </LinkContainer>
         </div>
