@@ -1,10 +1,15 @@
-import React from "react";
-import { LinkContainer } from "react-router-bootstrap";
+import React, { useState } from "react";
 import { Button, Row, Image } from "react-bootstrap";
-// import styled from "styled-components";
+import StopModal from "../components/StopModal";
 import potlogo from "../assets/potlogo.gif";
 
 const LandingScreen = () => {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+
+  const handleShow = () => setShow(true);
+
   return (
     <>
       <Row className="text-center">
@@ -15,13 +20,12 @@ const LandingScreen = () => {
           questions
         </h3>
         <div className="mt-5">
-          <LinkContainer to="/questions">
-            <Button size="lg" as="button" className="btn-success">
-              Lookup Strain
-            </Button>
-          </LinkContainer>
+          <Button variant="primary" onClick={handleShow}>
+            Launch static backdrop modal
+          </Button>
         </div>
       </Row>
+      <StopModal show={show} handleClose={handleClose} />
     </>
   );
 };
